@@ -43,3 +43,8 @@ launch.jsonがない場合に生成できる設定の、
 3. `Dev Containers: Reopen in Container`を実行する
 4. `Cargo.toml has been detected in this workspace.Would you like to generate launch configurations for its targets?`の、生成を実行する
 5. デバッグの実行
+
+```sh
+# serverのprocessをkillする
+kill -9 $(pidof backend)
+```
