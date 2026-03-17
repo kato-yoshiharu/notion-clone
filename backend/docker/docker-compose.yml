@@ -10,15 +10,9 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - type: bind
-        source: ../..
-        target: /app
-      - type: volume
-        source: notion-clone-app-cargo
-        target: /usr/local/cargo/registry
-      - type: volume
-        source: notion-clone-app-target
-        target: /app/target
+      - ../..:/app
+      - notion-clone-app-cargo:/usr/local/cargo/registry
+      - notion-clone-app-target:/app/target
     working_dir: /app/backend
     env_file: "${ENV_FILE:-../.env.dev}"
     command: "${COMMAND}"
