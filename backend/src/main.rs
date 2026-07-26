@@ -23,15 +23,19 @@ use std::{net::SocketAddr, sync::Arc};
 use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-#[tokio::main]
-async fn main() {
-    tracing_subscriber::registry()
-        .with(tracing_subscriber::EnvFilter::new(
-            std::env::var("RUST_LOG").unwrap_or_else(|_| "backend=trace".into()),
-        ))
-        .with(tracing_subscriber::fmt::layer())
-        .init();
+/// Lambda実行環境ではこの変数がランタイムから必ず注入される。
+/// これを見てローカル起動とLambda起動を切り替える。
+fn is_running_on_lambda() -> bool {
+    std::env::var("AWS_LAMBDA_RUNTIME_API").is_ok()
+}
 
+/// ローカルは`axum::body::Body`、Lambdaは`lambda_http::Body`とボディ型が異なるため、
+/// ルータをボディ型に対して汎用にしておき、呼び出し側で具体化する。
+async fn build_app<B>() -> Router<(), B>
+where
+    B: axum::body::HttpBody<Data = axum::body::Bytes> + Send + Sync + Unpin + 'static,
+    B::Error: Into<axum::BoxError>,
+{
     let pool = create_pool().await;
     let pool = Arc::new(pool);
 
@@ -48,20 +52,48 @@ async fn main() {
     .data(page_use_case)
     .finish();
 
-    let app = Router::new()
+    let allowed_origin =
+        std::env::var("CORS_ALLOWED_ORIGIN").unwrap_or_else(|_| "http://localhost:3000".into());
+
+    Router::new()
         .route("/", get(graphql_playground).post(graphql_handler))
         .layer(Extension(schema))
         .layer(
             CorsLayer::new()
-                .allow_origin("http://localhost:3000".parse::<HeaderValue>().unwrap())
+                .allow_origin(allowed_origin.parse::<HeaderValue>().unwrap())
                 .allow_methods(Any)
                 .allow_headers(vec![CONTENT_TYPE]),
-        );
+        )
+}
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
-    tracing::debug!("listening on {}", addr);
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+#[tokio::main]
+async fn main() -> Result<(), lambda_http::Error> {
+    let subscriber = tracing_subscriber::registry().with(tracing_subscriber::EnvFilter::new(
+        std::env::var("RUST_LOG").unwrap_or_else(|_| "backend=trace".into()),
+    ));
+    if is_running_on_lambda() {
+        // CloudWatch Logsではエスケープシーケンスが読めず、時刻もLambda側が付与する。
+        subscriber
+            .with(
+                tracing_subscriber::fmt::layer()
+                    .with_ansi(false)
+                    .without_time(),
+            )
+            .init();
+    } else {
+        subscriber.with(tracing_subscriber::fmt::layer()).init();
+    }
+
+    if is_running_on_lambda() {
+        lambda_http::run(build_app::<lambda_http::Body>().await).await?;
+    } else {
+        let app = build_app::<axum::body::Body>().await;
+        let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
+        tracing::debug!("listening on {}", addr);
+        axum::Server::bind(&addr)
+            .serve(app.into_make_service())
+            .await?;
+    }
+
+    Ok(())
 }

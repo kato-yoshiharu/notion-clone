@@ -69,6 +69,17 @@ args = ["make", "-p", "$PROFILE", "docker-run", "sqlx migrate add ${@}"]
 command = "cargo"
 args = ["make", "-p", "$PROFILE", "docker-run", "sqlx db setup"]
 
+# 以下はLambdaデプロイ用。cargo-lambdaのインストールが必要。
+# クロスコンパイルするため、他タスクと違いDocker外のホストで実行する。
+
+[tasks.lambda-build]
+command = "cargo"
+args = ["lambda", "build", "--release", "--arm64", "--bin", "backend"]
+
+[tasks.lambda-watch]
+command = "cargo"
+args = ["lambda", "watch"]
+
 [tasks.push-image]
 script = '''
 cd docker
