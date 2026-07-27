@@ -21,6 +21,7 @@ sqlx = { version = "0.6.2", features = [
     "uuid",
     "chrono",
 ] }
+subtle = "2.6"
 thiserror = "1.0.40"
 tokio = { version = "1.24.2", features = ["macros", "rt-multi-thread"] }
 tower-http = { version = "0.3.5", features = ["cors"] }
