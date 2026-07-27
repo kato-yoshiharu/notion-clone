@@ -20,6 +20,7 @@ sqlx = { version = "0.6.2", features = [
     "postgres",
     "uuid",
     "chrono",
+    "migrate",
 ] }
 subtle = "2.6"
 thiserror = "1.0.40"

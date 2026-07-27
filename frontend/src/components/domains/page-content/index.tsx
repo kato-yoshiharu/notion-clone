@@ -14,8 +14,13 @@ export interface PageContentProps {
 export const PageContent = memo((props: PageContentProps) => {
   const titleElRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
-    if (titleElRef.current == null) return;
-    titleElRef.current.textContent = props.title;
+    const el = titleElRef.current;
+    if (el == null) return;
+    // 編集中にtextContentを書き換えるとキャレットが先頭に戻るため回避
+    if (document.activeElement === el) return;
+    if (el.textContent !== props.title) {
+      el.textContent = props.title;
+    }
   }, [props.title]);
   const onInputTitle: React.FormEventHandler<HTMLHeadingElement> = useCallback(
     async (event) => {
@@ -27,8 +32,12 @@ export const PageContent = memo((props: PageContentProps) => {
 
   const textElRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (textElRef.current == null) return;
-    textElRef.current.textContent = props.text;
+    const el = textElRef.current;
+    if (el == null) return;
+    if (document.activeElement === el) return;
+    if (el.textContent !== props.text) {
+      el.textContent = props.text;
+    }
   }, [props.text]);
   const onInputText: React.FormEventHandler<HTMLDivElement> = useCallback(
     async (event) => {

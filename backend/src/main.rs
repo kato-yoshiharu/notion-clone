@@ -66,6 +66,13 @@ where
     B::Error: Into<axum::BoxError>,
 {
     let pool = create_pool().await;
+
+    // TODO: マイグレーション実行はCIのデプロイ前ステップに移す
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await
+        .expect("failed to run database migrations");
+
     let pool = Arc::new(pool);
 
     let page_repository: Arc<dyn IPageRepository> =
@@ -81,11 +88,12 @@ where
     .data(page_use_case)
     .finish();
 
-    let allowed_origin =
-        std::env::var("CORS_ALLOWED_ORIGIN").unwrap_or_else(|_| "http://localhost:3000".into());
+    let frontend_origin =
+        std::env::var("FRONTEND_ORIGIN").unwrap_or_else(|_| "http://localhost:3000".into());
 
     let router = Router::new()
         .route("/", get(graphql_playground).post(graphql_handler))
+        .route("/graphql", get(graphql_playground).post(graphql_handler))
         .layer(Extension(schema));
 
     // ローカル開発では未設定のため検証を挟まない。
@@ -109,7 +117,11 @@ where
     // プリフライトも検証前に処理される。
     router.layer(
         CorsLayer::new()
-            .allow_origin(allowed_origin.parse::<HeaderValue>().unwrap())
+            .allow_origin(
+                frontend_origin
+                    .parse::<HeaderValue>()
+                    .expect("invalid FRONTEND_ORIGIN"),
+            )
             .allow_methods(Any)
             .allow_headers(vec![CONTENT_TYPE]),
     )
