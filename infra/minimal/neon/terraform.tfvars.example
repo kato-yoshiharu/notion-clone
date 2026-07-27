@@ -1,0 +1,5 @@
+# terraform.tfvars にコピーして値を埋める。terraform.tfvars はgitignore対象。
+# APIキーは NEON_API_KEY 環境変数で渡す。
+
+# Neonのダッシュボード（Organization settings）で確認できるID。
+org_id = "org-xxxx-xxxx"

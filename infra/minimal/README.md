@@ -21,6 +21,8 @@ axum自体は設定次第でWorkers上でも動くが、`sqlx`はtokioのTCPソ�
 不採用にした選択肢:
 
 - DB を Aurora Serverless v2 にする案 → VPC・NATゲートウェイなど周辺コストが個人開発には過大
+- DB を Supabase にする案（2026-07時点の無料枠で比較）
+  - 無料枠では7日間アクセスがないとプロジェクトが一時停止し、手動で復帰させる必要がある。
 - Backend をRust/AxumのままCloudflare Workersに載せ、DBはNeonを継続する案
   - NeonのServerless DriverはJS/TS専用でRust/wasm実装がない
   - 生ソケット + `tokio-postgres`で繋ぐ道はあるが、Workersの`connect()`APIをtokioのAsyncストリームへ橋渡しする自作実装が必要で、かつ`sqlx`のコンパイル時クエリ検証も失う実験的経路のため見送り
