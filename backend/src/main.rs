@@ -33,6 +33,13 @@ async fn main() {
         .init();
 
     let pool = create_pool().await;
+
+    // TODO: マイグレーション実行はCIのデプロイ前ステップに移す
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await
+        .expect("failed to run database migrations");
+
     let pool = Arc::new(pool);
 
     let page_repository: Arc<dyn IPageRepository> =
@@ -48,12 +55,20 @@ async fn main() {
     .data(page_use_case)
     .finish();
 
+    let frontend_origin =
+        std::env::var("FRONTEND_ORIGIN").unwrap_or_else(|_| "http://localhost:3000".into());
+
     let app = Router::new()
         .route("/", get(graphql_playground).post(graphql_handler))
+        .route("/graphql", get(graphql_playground).post(graphql_handler))
         .layer(Extension(schema))
         .layer(
             CorsLayer::new()
-                .allow_origin("http://localhost:3000".parse::<HeaderValue>().unwrap())
+                .allow_origin(
+                    frontend_origin
+                        .parse::<HeaderValue>()
+                        .expect("invalid FRONTEND_ORIGIN"),
+                )
                 .allow_methods(Any)
                 .allow_headers(vec![CONTENT_TYPE]),
         );
