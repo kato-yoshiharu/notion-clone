@@ -18,7 +18,7 @@ const Home: NextPage = () => {
     void router.replace(routes.notion.page.show(firstPage.id));
   }, [listRootPagesResult.data, router]);
 
-  return <div>Home</div>;
+  return null;
 };
 
 export default Home;

@@ -1,0 +1,5 @@
+# terraform.tfvars にコピーして値を埋める。terraform.tfvars はgitignore対象。
+# DATABASE_URL は infra/minimal/neon のstateから自動で読むため、ここには書かない。
+
+# Cloudflare経由であることを示す共有シークレット。`openssl rand -hex 32` などで生成する。
+origin_shared_secret = "replace-me"

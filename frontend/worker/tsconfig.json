@@ -1,0 +1,17 @@
+{
+  // WorkersとDOMの型は衝突するため、アプリ側のtsconfigとは分ける。
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    // 指定しないと@types配下が全て自動で入り、Workerに存在しないNodeのグローバルが型として通ってしまう。
+    "types": [],
+    "strict": true,
+    // wranglerはesbuildでファイル単位に変換するため、それで壊れる書き方を禁じる。
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["**/*.ts"]
+}

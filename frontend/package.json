@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "tsc": "tsc --noEmit",
+    "preview": "wrangler dev",
+    "types": "wrangler types worker/worker-configuration.d.ts",
+    "deploy:cf": "wrangler deploy",
+    "tsc": "tsc --noEmit && tsc -p worker --noEmit",
     "lint:es": "eslint '**/*.{js,jsx,ts,tsx}'",
     "lint:style": "stylelint '**/*.{css,scss,ts,tsx}'",
     "lint": "pnpm lint:es; pnpm lint:style",
@@ -48,10 +51,17 @@
     "typescript": "5.2.2",
     "typesync": "^0.11.1",
     "vite": "^5.1.5",
-    "vitest": "^0.34.6"
+    "vitest": "^0.34.6",
+    "wrangler": "4.86.0"
   },
   "engines": {
     "node": "20.x",
     "pnpm": ">=3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "workerd"
+    ]
   }
 }
