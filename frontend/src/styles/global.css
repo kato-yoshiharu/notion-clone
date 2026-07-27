@@ -1,6 +1,6 @@
-/* stylelint-disable-next-line selector-id-pattern */
 html,
 body,
+/* stylelint-disable-next-line selector-id-pattern */
 #__next {
   height: 100%;
   font-family: BlinkMacSystemFont, sans-serif;
