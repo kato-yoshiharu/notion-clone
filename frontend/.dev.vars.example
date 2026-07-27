@@ -1,0 +1,4 @@
+# .dev.vars にコピーして値を埋める。wrangler dev で使うローカル値。
+# 本番の値は `wrangler secret put` で設定する。
+BACKEND_ORIGIN="http://localhost:8080/"
+ORIGIN_SHARED_SECRET="local-dummy"

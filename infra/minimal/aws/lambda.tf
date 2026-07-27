@@ -55,15 +55,11 @@ resource "aws_lambda_function" "backend" {
   memory_size = 512
   timeout     = 30
 
-  # Function URLは公開されており、403で弾いた分も課金対象の実行になる。
-  reserved_concurrent_executions = 10
-
   environment {
     variables = {
       DATABASE_URL = local.database_url
       # 1コンテナが同時に1リクエストしか処理しないため、プールは1本で足りる。
       DATABASE_MAX_CONNECTIONS = "1"
-      CORS_ALLOWED_ORIGIN      = var.cors_allowed_origin
       ORIGIN_SHARED_SECRET     = var.origin_shared_secret
       RUST_LOG                 = "backend=info"
     }
@@ -81,4 +77,15 @@ resource "aws_lambda_function" "backend" {
 resource "aws_lambda_function_url" "backend" {
   function_name      = aws_lambda_function.backend.function_name
   authorization_type = "NONE"
+}
+
+# 2025年10月以降、Function URLの呼び出しには lambda:InvokeFunctionUrl だけでなく lambda:InvokeFunction の許可も必要。
+# aws_lambda_function_urlは前者しか作らないため、これが無いとauthorization_type = "NONE"でも403 Forbiddenになる。
+# invoked_via_function_urlを付けて、直接Invokeされる経路は許可しない。
+resource "aws_lambda_permission" "function_url_invoke" {
+  statement_id             = "FunctionURLInvokeAllowPublicAccess"
+  action                   = "lambda:InvokeFunction"
+  function_name            = aws_lambda_function.backend.function_name
+  principal                = "*"
+  invoked_via_function_url = true
 }

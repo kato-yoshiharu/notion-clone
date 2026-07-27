@@ -10,11 +10,6 @@ variable "region" {
   default     = "ap-northeast-1"
 }
 
-variable "cors_allowed_origin" {
-  description = "Frontend origin allowed by the backend's CORS layer."
-  type        = string
-}
-
 variable "origin_shared_secret" {
   description = "Shared secret sent by Cloudflare in the X-Origin-Secret header."
   type        = string
