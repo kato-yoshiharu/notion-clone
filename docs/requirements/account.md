@@ -33,3 +33,5 @@
 - データベースは Neon (PostgreSQL)
 - フロントエンドは Next.js 14 (Pages Router)
 - 最小コスト構成を維持する。有料プランを前提とした選定はしない
+- 既存の Cloudflare Worker は「ブラウザから Lambda を直接叩かせない」方針を取っており、`/graphql` へのリクエストはすべて Worker を経由する
+
