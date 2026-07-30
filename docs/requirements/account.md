@@ -31,3 +31,4 @@
 
 - バックエンドは Rust + Axum + async-graphql で実装され、AWS Lambda 上で稼働する
 - データベースは Neon (PostgreSQL)
+- フロントエンドは Next.js 14 (Pages Router)
