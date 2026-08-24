@@ -1,30 +1,13 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { PageList, PageListProps } from ".";
-
-import { PageId } from "@/graphql/generated";
+import { PageList } from ".";
 
 export default {
   component: PageList,
-  excludeStories: ["defaultProps"],
-} as Meta<PageListProps>;
-
-export const defaultProps: PageListProps = {
-  result: {
-    type: "ok",
-    data: {
-      pages: [
-        { id: "1" as PageId, title: "page1" },
-        { id: "2" as PageId, title: "page2" },
-      ],
-    },
-  },
-  onClickAddPage: () => {},
-  onClickRemovePageButton: () => {},
-};
+} as Meta;
 
 export const Default: StoryObj = {
   render: () => {
-    return <PageList {...defaultProps} />;
+    return <PageList />;
   },
 };

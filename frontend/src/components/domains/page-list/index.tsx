@@ -15,7 +15,6 @@ import { usePageTree } from "@/global-states/page-tree";
 import {
   MoveTarget,
   MoveTargetType,
-  Page,
   PageId,
   useAddPageMutation,
   useListChildrenPagesLazyQuery,
@@ -24,20 +23,12 @@ import {
   useRemovePageMutation,
   useUpdatePageMutation,
 } from "@/graphql/generated";
-import { Result } from "@/types";
-
-// TODO: fix props
-export interface PageListProps {
-  result: Result<{ pages: Pick<Page, "id" | "title">[] }>;
-  onClickAddPage: () => void;
-  onClickRemovePageButton: (id: PageId) => void;
-}
 
 type Data = {
   title: string;
 };
 
-export const PageList = memo((_props: PageListProps) => {
+export const PageList = memo(() => {
   const { pageTree: tree, setPageTree: setTree } = usePageTree();
 
   const [listRootPages] = useListRootPagesLazyQuery();

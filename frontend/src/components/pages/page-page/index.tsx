@@ -6,11 +6,8 @@ import { PagePagePresenter, PagePagePresenterProps } from "./presenter";
 
 import {
   PageId,
-  useAddPageMutation,
   useGetPageInPagePageQuery,
   useListAncestorPagesQuery,
-  useListRootPagesQuery,
-  useRemovePageMutation,
   useUpdatePageMutation,
 } from "@/graphql/generated";
 import { useRouterQuery } from "@/hooks/use-router-query";
@@ -67,44 +64,6 @@ export const PagePage: NextPage = () => {
     [listAncestorPagesResult.data?.listAncestorPages],
   );
 
-  const listRootPagesResult = useListRootPagesQuery();
-  const pageListResult =
-    useMemo((): PagePagePresenterProps["pageListResult"] => {
-      if (listRootPagesResult.data == null)
-        return {
-          type: "loading",
-        };
-      switch (listRootPagesResult.data.listRootPages.__typename) {
-        case "ListPages":
-          return {
-            type: "ok",
-            data: { pages: listRootPagesResult.data.listRootPages.items },
-          };
-        case "GraphQLError":
-          return {
-            type: "err",
-            error: new Error(),
-          };
-        default:
-          return listRootPagesResult.data.listRootPages satisfies never;
-      }
-    }, [listRootPagesResult.data]);
-
-  const [addPage] = useAddPageMutation();
-  const onClickAddPage = useCallback(async () => {
-    await addPage({
-      variables: { parentId: null, addPage: { title: "", text: "" } },
-    });
-  }, [addPage]);
-
-  const [removePage] = useRemovePageMutation();
-  const onClickRemovePageButton = useCallback(
-    async (id: PageId) => {
-      await removePage({ variables: { id } });
-    },
-    [removePage],
-  );
-
   const title =
     getPageInPagePageResult.data?.getPage.__typename === "Page"
       ? getPageInPagePageResult.data.getPage.title
@@ -116,9 +75,6 @@ export const PagePage: NextPage = () => {
 
   return (
     <PagePagePresenter
-      pageListResult={pageListResult}
-      onClickAddPage={onClickAddPage}
-      onClickRemovePageButton={onClickRemovePageButton}
       ancestors={ancestors}
       title={title}
       onChangeTitle={updateTitle}
