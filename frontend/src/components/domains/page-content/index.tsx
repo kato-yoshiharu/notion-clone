@@ -21,7 +21,11 @@ export const PageContent = memo((props: PageContentProps) => {
   useEffect(() => {
     const el = titleElRef.current;
     if (el == null) return;
-    el.textContent = props.title;
+    // 編集中にtextContentを書き換えるとキャレットが先頭に戻るため回避
+    if (document.activeElement === el) return;
+    if (el.textContent !== props.title) {
+      el.textContent = props.title;
+    }
   }, [props.title]);
   const { debounced: sendTitle, flush: flushTitle } = useDebouncedCallback(
     (value: string) => {
@@ -40,7 +44,10 @@ export const PageContent = memo((props: PageContentProps) => {
   useEffect(() => {
     const el = textElRef.current;
     if (el == null) return;
-    el.textContent = props.text;
+    if (document.activeElement === el) return;
+    if (el.textContent !== props.text) {
+      el.textContent = props.text;
+    }
   }, [props.text]);
   const { debounced: sendText, flush: flushText } = useDebouncedCallback(
     (value: string) => {
