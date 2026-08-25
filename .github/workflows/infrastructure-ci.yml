@@ -12,7 +12,7 @@ on:
 
 defaults:
   run:
-    working-directory: ./infrastructure/cdk/notion-clone
+    working-directory: ./infrastructure/notion-clone
 
 jobs:
   check:

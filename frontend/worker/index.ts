@@ -13,10 +13,7 @@ const API_PATH = "/graphql";
 /** 静的書き出しで生成される動的ルートのシェル。 */
 const PAGE_SHELL = "/[page-id].html";
 
-async function proxyToBackend(
-  request: Request,
-  env: Env,
-): Promise<Response> {
+async function proxyToBackend(request: Request, env: Env): Promise<Response> {
   const backend = new URL(env.BACKEND_ORIGIN);
 
   const headers = new Headers(request.headers);
