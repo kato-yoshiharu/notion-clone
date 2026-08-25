@@ -35,6 +35,6 @@ UI を先に更新し、その後に API 通信を行う（楽観的更新）。
 `title` / `text` はローカル state を持たずサーバー値を直接描画しているため、
 `useEffect` 側に「編集中はキャレットが戻るので書き換えない」という回避が入っている。
 
-- [ ] `onChangeTitle` / `onChangeText` をローカル state + デバウンス送信へ変更する
-- [ ] `onInputTitle` / `onInputText` の `useCallback` の依存を `props` 全体から必要な関数のみへ絞る
+- [x] `onChangeTitle` / `onChangeText` をデバウンス送信へ変更する（未送信分は blur とアンマウントで flush する）
+- [x] `onInputTitle` / `onInputText` の `useCallback` の依存を `props` 全体から必要な関数のみへ絞る
       （現状は毎レンダーで再生成され `memo` が効いていない）
