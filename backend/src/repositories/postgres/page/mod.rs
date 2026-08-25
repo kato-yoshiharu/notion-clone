@@ -274,11 +274,12 @@ impl InternalPageRepository {
 
         let page = query_as::<_, Page>(
             "
-            INSERT INTO notion.pages (title, text)
-            VALUES ($1, $2)
+            INSERT INTO notion.pages (id, title, text)
+            VALUES (COALESCE($1, uuid_generate_v4()), $2, $3)
             RETURNING id, title, text, created_at, updated_at
             ",
         )
+        .bind(add_page.id.map(|i| i.0))
         .bind(add_page.title)
         .bind(add_page.text)
         .fetch_one(&mut *tx)

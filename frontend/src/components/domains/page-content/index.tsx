@@ -3,6 +3,9 @@ import { memo, useCallback, useEffect, useRef } from "react";
 import { Container, Content, HeaderContainer, Text, Title } from "./styles";
 
 import { Page } from "@/graphql/generated";
+import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
+
+const DEBOUNCE_MS = 500;
 
 export interface PageContentProps {
   title: Page["title"];
@@ -12,6 +15,8 @@ export interface PageContentProps {
 }
 
 export const PageContent = memo((props: PageContentProps) => {
+  const { onChangeTitle, onChangeText } = props;
+
   const titleElRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     const el = titleElRef.current;
@@ -22,12 +27,17 @@ export const PageContent = memo((props: PageContentProps) => {
       el.textContent = props.title;
     }
   }, [props.title]);
-  const onInputTitle: React.FormEventHandler<HTMLHeadingElement> = useCallback(
-    async (event) => {
-      const value = event.currentTarget.textContent ?? "";
-      await props.onChangeTitle(value);
+  const { debounced: sendTitle, flush: flushTitle } = useDebouncedCallback(
+    (value: string) => {
+      void onChangeTitle(value);
     },
-    [props],
+    DEBOUNCE_MS,
+  );
+  const onInputTitle: React.FormEventHandler<HTMLHeadingElement> = useCallback(
+    (event) => {
+      sendTitle(event.currentTarget.textContent ?? "");
+    },
+    [sendTitle],
   );
 
   const textElRef = useRef<HTMLDivElement>(null);
@@ -39,12 +49,17 @@ export const PageContent = memo((props: PageContentProps) => {
       el.textContent = props.text;
     }
   }, [props.text]);
-  const onInputText: React.FormEventHandler<HTMLDivElement> = useCallback(
-    async (event) => {
-      const value = event.currentTarget.textContent ?? "";
-      await props.onChangeText(value);
+  const { debounced: sendText, flush: flushText } = useDebouncedCallback(
+    (value: string) => {
+      void onChangeText(value);
     },
-    [props],
+    DEBOUNCE_MS,
+  );
+  const onInputText: React.FormEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      sendText(event.currentTarget.textContent ?? "");
+    },
+    [sendText],
   );
 
   return (
@@ -55,6 +70,8 @@ export const PageContent = memo((props: PageContentProps) => {
             contentEditable
             suppressContentEditableWarning
             onInput={onInputTitle}
+            // フォーカスを外した時点で未送信分を送る
+            onBlur={flushTitle}
             ref={titleElRef}
           />
         </HeaderContainer>
@@ -62,6 +79,7 @@ export const PageContent = memo((props: PageContentProps) => {
           contentEditable
           suppressContentEditableWarning
           onInput={onInputText}
+          onBlur={flushText}
           ref={textElRef}
         />
       </Content>
