@@ -57,6 +57,11 @@ Node 20 固定は 2. の乖離が CI 側でも起きていたことを意味す�
 
 `out/` を除外する設定が stylelint / eslint のいずれにも無く、ビルド済みの minified なファイルが lint 対象に含まれていた。
 
+### 7. Infrastructure CI が存在しないディレクトリを指していた
+
+`infrastructure-ci.yml` の `working-directory` は `./infrastructure/cdk/notion-clone` だが、
+`271f2eb` でディレクトリが `infrastructure/notion-clone` へ移動しており、パスが古いままだった。
+
 ## タスク
 
 ### 1. pnpm のビルドスクリプト許可設定
@@ -114,3 +119,7 @@ lockfile 9.0 が読まれるようになり、CI が実際にロックされた�
 
 - [x] `src/hooks/use-router-query.ts`
 - [x] `worker/index.ts`
+
+### 8. Infrastructure CI の working-directory 修正
+
+- [x] `infrastructure-ci.yml` の `working-directory` を `./infrastructure/notion-clone` に修正する
