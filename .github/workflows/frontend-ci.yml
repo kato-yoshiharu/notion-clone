@@ -20,8 +20,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Cache pnpm
-        uses: suimenkathemove/pnpm-cache-action@v1.0.0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install
       - name: Check
@@ -32,8 +40,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Cache pnpm
-        uses: suimenkathemove/pnpm-cache-action@v1.0.0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install
       - name: Lint
@@ -44,8 +60,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Cache pnpm
-        uses: suimenkathemove/pnpm-cache-action@v1.0.0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install
       - name: Build
@@ -56,8 +80,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Cache pnpm
-        uses: suimenkathemove/pnpm-cache-action@v1.0.0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install
       - name: Build Storybook
@@ -68,8 +100,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Cache pnpm
-        uses: suimenkathemove/pnpm-cache-action@v1.0.0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install
       - name: Unit Test
