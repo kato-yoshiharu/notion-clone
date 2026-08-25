@@ -79,3 +79,31 @@ UI を先に更新すると「画面上は反映されたがサーバーには�
 そもそもこの middleware が発火するのは「最後の 1 ページを削除したとき」だけなので、
 **木の監視をやめ、`onClickDelete` の `commit` が成功した後で補充を呼ぶ**形にした。
 
+### 3. ページ追加の楽観的更新
+
+`page-list` の `onClickAddRoot` / `onClickAddChild` と `useEnsurePageExists` は、
+新規ノードの `id` が `addPage` のレスポンス由来のため、順序を入れ替えるだけでは成立しない。
+先に描画するには id を先に確定させる必要がある。
+
+- 案 A: バックエンドが id を受け取れるようにし、フロントで採番する（採用）
+- 案 B: 仮 id で描画し、レスポンス到着後に本物の id へ差し替える
+  - 差し替え完了までの間にそのノードを操作されると仮 id のまま mutation が飛ぶため、操作の抑止が必要
+
+案 B は「差し替え待ちのノード」という状態を全ハンドラが意識する必要があり、
+タスク 2 の共通ヘルパーとも噛み合わない。案 A を採る。
+
+案 A のコストは小さい。`notion.pages.id` は既に `UUID DEFAULT uuid_generate_v4()` のため
+**マイグレーションは不要**で、id が渡されたときだけ `DEFAULT` の代わりに使う形にすればよい。
+
+- [x] `models::page::AddPage` に `id: Option<PageId>` を追加する
+- [x] `apis/page.rs` の `AddPage` インプットに `id` を追加し、`From` 実装で引き回す
+- [x] `repositories/postgres/page/mod.rs` の `add` の INSERT を、
+      `id` が `Some` のときは明示指定・`None` のときは従来どおり採番する形にする
+- [x] フロントで `crypto.randomUUID()` により採番し、`onClickAddRoot` / `onClickAddChild` /
+      `useEnsurePageExists` をタスク 2 の共通ヘルパー経由の楽観的更新へ移行する
+
+INSERT は `VALUES (COALESCE($1, uuid_generate_v4()), ...)` とした。
+一文のままで済み、`id` が `None` のときの採番はカラムの `DEFAULT` と同じ式になる。
+
+なお `useEnsurePageExists` は `onClickDelete` の `commit` の中から呼ばれるため、
+共通ヘルパーを二重に通さないよう、そこだけは `setPageTree` と `addPage` を直に並べている。

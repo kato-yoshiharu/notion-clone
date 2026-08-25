@@ -14,6 +14,8 @@ pub struct Page {
 
 #[derive(Debug, Default)]
 pub struct AddPage {
+    /// 渡された場合はその値を使い、`None`の場合はDBの`DEFAULT`に任せる
+    pub id: Option<PageId>,
     pub title: String,
     pub text: String,
 }

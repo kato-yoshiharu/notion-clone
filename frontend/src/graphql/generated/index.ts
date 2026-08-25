@@ -21,6 +21,7 @@ export type Scalars = {
 };
 
 export type AddPage = {
+  id?: InputMaybe<Scalars['PageId']['input']>;
   text: Scalars['String']['input'];
   title: Scalars['String']['input'];
 };
@@ -257,8 +258,11 @@ export function useHealthCheckLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<HealthCheckQuery, HealthCheckQueryVariables>(HealthCheckDocument, options);
         }
-export function useHealthCheckSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<HealthCheckQuery, HealthCheckQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
+// @ts-ignore
+export function useHealthCheckSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<HealthCheckQuery, HealthCheckQueryVariables>): Apollo.UseSuspenseQueryResult<HealthCheckQuery, HealthCheckQueryVariables>;
+export function useHealthCheckSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<HealthCheckQuery, HealthCheckQueryVariables>): Apollo.UseSuspenseQueryResult<HealthCheckQuery | undefined, HealthCheckQueryVariables>;
+export function useHealthCheckSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<HealthCheckQuery, HealthCheckQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<HealthCheckQuery, HealthCheckQueryVariables>(HealthCheckDocument, options);
         }
 export type HealthCheckQueryHookResult = ReturnType<typeof useHealthCheckQuery>;
@@ -302,8 +306,11 @@ export function useListRootPagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ListRootPagesQuery, ListRootPagesQueryVariables>(ListRootPagesDocument, options);
         }
-export function useListRootPagesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListRootPagesQuery, ListRootPagesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
+// @ts-ignore
+export function useListRootPagesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListRootPagesQuery, ListRootPagesQueryVariables>): Apollo.UseSuspenseQueryResult<ListRootPagesQuery, ListRootPagesQueryVariables>;
+export function useListRootPagesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ListRootPagesQuery, ListRootPagesQueryVariables>): Apollo.UseSuspenseQueryResult<ListRootPagesQuery | undefined, ListRootPagesQueryVariables>;
+export function useListRootPagesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ListRootPagesQuery, ListRootPagesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<ListRootPagesQuery, ListRootPagesQueryVariables>(ListRootPagesDocument, options);
         }
 export type ListRootPagesQueryHookResult = ReturnType<typeof useListRootPagesQuery>;
@@ -340,7 +347,7 @@ export const ListChildrenPagesDocument = gql`
  *   },
  * });
  */
-export function useListChildrenPagesQuery(baseOptions: Apollo.QueryHookOptions<ListChildrenPagesQuery, ListChildrenPagesQueryVariables>) {
+export function useListChildrenPagesQuery(baseOptions: Apollo.QueryHookOptions<ListChildrenPagesQuery, ListChildrenPagesQueryVariables> & ({ variables: ListChildrenPagesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ListChildrenPagesQuery, ListChildrenPagesQueryVariables>(ListChildrenPagesDocument, options);
       }
@@ -348,8 +355,11 @@ export function useListChildrenPagesLazyQuery(baseOptions?: Apollo.LazyQueryHook
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ListChildrenPagesQuery, ListChildrenPagesQueryVariables>(ListChildrenPagesDocument, options);
         }
-export function useListChildrenPagesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListChildrenPagesQuery, ListChildrenPagesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
+// @ts-ignore
+export function useListChildrenPagesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListChildrenPagesQuery, ListChildrenPagesQueryVariables>): Apollo.UseSuspenseQueryResult<ListChildrenPagesQuery, ListChildrenPagesQueryVariables>;
+export function useListChildrenPagesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ListChildrenPagesQuery, ListChildrenPagesQueryVariables>): Apollo.UseSuspenseQueryResult<ListChildrenPagesQuery | undefined, ListChildrenPagesQueryVariables>;
+export function useListChildrenPagesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ListChildrenPagesQuery, ListChildrenPagesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<ListChildrenPagesQuery, ListChildrenPagesQueryVariables>(ListChildrenPagesDocument, options);
         }
 export type ListChildrenPagesQueryHookResult = ReturnType<typeof useListChildrenPagesQuery>;
@@ -531,7 +541,7 @@ export const GetPageInPagePageDocument = gql`
  *   },
  * });
  */
-export function useGetPageInPagePageQuery(baseOptions: Apollo.QueryHookOptions<GetPageInPagePageQuery, GetPageInPagePageQueryVariables>) {
+export function useGetPageInPagePageQuery(baseOptions: Apollo.QueryHookOptions<GetPageInPagePageQuery, GetPageInPagePageQueryVariables> & ({ variables: GetPageInPagePageQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetPageInPagePageQuery, GetPageInPagePageQueryVariables>(GetPageInPagePageDocument, options);
       }
@@ -539,8 +549,11 @@ export function useGetPageInPagePageLazyQuery(baseOptions?: Apollo.LazyQueryHook
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetPageInPagePageQuery, GetPageInPagePageQueryVariables>(GetPageInPagePageDocument, options);
         }
-export function useGetPageInPagePageSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetPageInPagePageQuery, GetPageInPagePageQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
+// @ts-ignore
+export function useGetPageInPagePageSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetPageInPagePageQuery, GetPageInPagePageQueryVariables>): Apollo.UseSuspenseQueryResult<GetPageInPagePageQuery, GetPageInPagePageQueryVariables>;
+export function useGetPageInPagePageSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetPageInPagePageQuery, GetPageInPagePageQueryVariables>): Apollo.UseSuspenseQueryResult<GetPageInPagePageQuery | undefined, GetPageInPagePageQueryVariables>;
+export function useGetPageInPagePageSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetPageInPagePageQuery, GetPageInPagePageQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<GetPageInPagePageQuery, GetPageInPagePageQueryVariables>(GetPageInPagePageDocument, options);
         }
 export type GetPageInPagePageQueryHookResult = ReturnType<typeof useGetPageInPagePageQuery>;
@@ -577,7 +590,7 @@ export const ListAncestorPagesDocument = gql`
  *   },
  * });
  */
-export function useListAncestorPagesQuery(baseOptions: Apollo.QueryHookOptions<ListAncestorPagesQuery, ListAncestorPagesQueryVariables>) {
+export function useListAncestorPagesQuery(baseOptions: Apollo.QueryHookOptions<ListAncestorPagesQuery, ListAncestorPagesQueryVariables> & ({ variables: ListAncestorPagesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ListAncestorPagesQuery, ListAncestorPagesQueryVariables>(ListAncestorPagesDocument, options);
       }
@@ -585,8 +598,11 @@ export function useListAncestorPagesLazyQuery(baseOptions?: Apollo.LazyQueryHook
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<ListAncestorPagesQuery, ListAncestorPagesQueryVariables>(ListAncestorPagesDocument, options);
         }
-export function useListAncestorPagesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListAncestorPagesQuery, ListAncestorPagesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
+// @ts-ignore
+export function useListAncestorPagesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListAncestorPagesQuery, ListAncestorPagesQueryVariables>): Apollo.UseSuspenseQueryResult<ListAncestorPagesQuery, ListAncestorPagesQueryVariables>;
+export function useListAncestorPagesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ListAncestorPagesQuery, ListAncestorPagesQueryVariables>): Apollo.UseSuspenseQueryResult<ListAncestorPagesQuery | undefined, ListAncestorPagesQueryVariables>;
+export function useListAncestorPagesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ListAncestorPagesQuery, ListAncestorPagesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
           return Apollo.useSuspenseQuery<ListAncestorPagesQuery, ListAncestorPagesQueryVariables>(ListAncestorPagesDocument, options);
         }
 export type ListAncestorPagesQueryHookResult = ReturnType<typeof useListAncestorPagesQuery>;

@@ -115,52 +115,68 @@ export const PageList = memo(() => {
 
   const onClickAddRoot: SortableTreeProps["onClickAddRoot"] =
     useCallback(async () => {
-      const result = await addPage({
-        variables: { parentId: null, addPage: { title: "", text: "" } },
-      });
-      invariant(
-        result.data?.addPage.__typename === "Page",
-        "TODO: error handling",
-      );
-      const newNode = result.data.addPage;
-      setTree((prev) =>
-        prev.concat({
-          id: newNode.id,
-          children: [],
-          collapsed: true,
-          data: {
-            title: "",
-          },
-        }),
-      );
-    }, [addPage, setTree]);
+      const id = crypto.randomUUID() as PageId;
 
-  const onClickAddChild: SortableTreeProps["onClickAddChild"] = useCallback(
-    async (id) => {
-      const result = await addPage({
-        variables: { parentId: id as PageId, addPage: { title: "", text: "" } },
-      });
-      invariant(
-        result.data?.addPage.__typename === "Page",
-        "TODO: error handling",
-      );
-      const newNode = result.data.addPage;
-      setTree((prev) =>
-        updateNode(prev, id, (node) => ({
-          ...node,
-          children: node.children.concat({
-            id: newNode.id,
+      await optimistic({
+        apply: (prev) =>
+          prev.concat({
+            id,
             children: [],
             collapsed: true,
             data: {
               title: "",
             },
           }),
-          collapsed: false,
-        })),
-      );
+        commit: async () => {
+          const result = await addPage({
+            variables: {
+              parentId: null,
+              addPage: { id, title: "", text: "" },
+            },
+          });
+          invariant(
+            result.data?.addPage.__typename === "Page",
+            "TODO: error handling",
+          );
+        },
+        errorMessage: "ページの追加に失敗しました",
+      });
+    }, [addPage, optimistic]);
+
+  const onClickAddChild: SortableTreeProps["onClickAddChild"] = useCallback(
+    async (parentId) => {
+      const id = crypto.randomUUID() as PageId;
+
+      await optimistic({
+        apply: (prev) =>
+          updateNode(prev, parentId, (node) => ({
+            ...node,
+            children: node.children.concat({
+              id,
+              children: [],
+              collapsed: true,
+              data: {
+                title: "",
+              },
+            }),
+            collapsed: false,
+          })),
+        commit: async () => {
+          const result = await addPage({
+            variables: {
+              parentId: parentId as PageId,
+              addPage: { id, title: "", text: "" },
+            },
+          });
+          invariant(
+            result.data?.addPage.__typename === "Page",
+            "TODO: error handling",
+          );
+        },
+        errorMessage: "ページの追加に失敗しました",
+      });
     },
-    [addPage, setTree],
+    [addPage, optimistic],
   );
 
   const onClickRename: SortableTreeProps["onClickRename"] = useCallback(

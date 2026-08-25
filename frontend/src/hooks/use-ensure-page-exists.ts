@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useCallback } from "react";
 
 import { PageTree, usePageTree } from "@/global-states/page-tree";
-import { useAddPageMutation } from "@/graphql/generated";
+import { PageId, useAddPageMutation } from "@/graphql/generated";
 import { routes } from "@/routes";
 
 /**
@@ -20,17 +20,10 @@ export const useEnsurePageExists = () => {
     async (pageTree: PageTree) => {
       if (pageTree.length !== 0) return;
 
-      const result = await addPage({
-        variables: { parentId: null, addPage: { title: "", text: "" } },
-      });
-      invariant(
-        result.data?.addPage.__typename === "Page",
-        "TODO: error handling",
-      );
-      const newPage = result.data.addPage;
+      const id = crypto.randomUUID() as PageId;
       setPageTree((prev) =>
         prev.concat({
-          id: newPage.id,
+          id,
           children: [],
           collapsed: true,
           data: {
@@ -39,7 +32,15 @@ export const useEnsurePageExists = () => {
         }),
       );
 
-      await router.push(routes.notion.page.show(newPage.id));
+      const result = await addPage({
+        variables: { parentId: null, addPage: { id, title: "", text: "" } },
+      });
+      invariant(
+        result.data?.addPage.__typename === "Page",
+        "TODO: error handling",
+      );
+
+      await router.push(routes.notion.page.show(id));
     },
     [addPage, router, setPageTree],
   );

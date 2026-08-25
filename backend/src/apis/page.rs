@@ -113,6 +113,7 @@ define_result!(GetPageResult, Page);
 
 #[derive(InputObject)]
 struct AddPage {
+    id: Option<PageId>,
     title: String,
     text: String,
 }
@@ -120,6 +121,7 @@ struct AddPage {
 impl From<AddPage> for models::page::AddPage {
     fn from(value: AddPage) -> Self {
         Self {
+            id: value.id.map(Into::into),
             title: value.title,
             text: value.text,
         }
