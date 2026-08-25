@@ -11,7 +11,7 @@ import {
   SortableTree,
   SortableTreeProps,
 } from "@/components/domains/sortable-tree";
-import { usePageTree } from "@/global-states/page-tree";
+import { PageTree, usePageTree } from "@/global-states/page-tree";
 import {
   MoveTarget,
   MoveTargetType,
@@ -23,6 +23,8 @@ import {
   useRemovePageMutation,
   useUpdatePageMutation,
 } from "@/graphql/generated";
+import { useEnsurePageExists } from "@/hooks/use-ensure-page-exists";
+import { useOptimisticPageTree } from "@/hooks/use-optimistic-page-tree";
 
 type Data = {
   title: string;
@@ -30,6 +32,9 @@ type Data = {
 
 export const PageList = memo(() => {
   const { pageTree: tree, setPageTree: setTree } = usePageTree();
+
+  const optimistic = useOptimisticPageTree();
+  const ensurePageExists = useEnsurePageExists();
 
   const [listRootPages] = useListRootPagesLazyQuery();
   const [listChildrenPages] = useListChildrenPagesLazyQuery();
@@ -60,37 +65,52 @@ export const PageList = memo(() => {
 
   const onClickCollapse: SortableTreeProps["onClickCollapse"] = useCallback(
     async (item) => {
-      if (item.collapsed) {
-        const result = await listChildrenPages({
-          variables: { id: item.id as PageId },
-        });
-        invariant(
-          result.data?.listChildrenPages.__typename === "ListPages",
-          "TODO: error handling",
-        );
-        const children = result.data.listChildrenPages.items;
-        const newTree = updateNode(tree, item.id, (node) => ({
-          ...node,
-          children: children.map((c) => ({
-            id: c.id,
-            children: [],
+      // 折りたたみはAPI通信を伴わないローカル更新
+      if (!item.collapsed) {
+        setTree((prev) =>
+          updateNode(prev, item.id, (node) => ({
+            ...node,
             collapsed: true,
-            data: {
-              title: c.title,
-            },
           })),
-          collapsed: false,
-        }));
-        setTree(newTree);
-      } else {
-        const newTree = updateNode(tree, item.id, (node) => ({
-          ...node,
-          collapsed: true,
-        }));
-        setTree(newTree);
+        );
+
+        return;
       }
+
+      // 既存の`children`があれば即座に開き、再取得は背後で行う
+      await optimistic({
+        apply: (prev) =>
+          updateNode(prev, item.id, (node) => ({
+            ...node,
+            collapsed: false,
+          })),
+        commit: async () => {
+          const result = await listChildrenPages({
+            variables: { id: item.id as PageId },
+          });
+          invariant(
+            result.data?.listChildrenPages.__typename === "ListPages",
+            "TODO: error handling",
+          );
+          const children = result.data.listChildrenPages.items;
+          setTree((prev) =>
+            updateNode(prev, item.id, (node) => ({
+              ...node,
+              children: children.map((c) => ({
+                id: c.id,
+                children: [],
+                collapsed: true,
+                data: {
+                  title: c.title,
+                },
+              })),
+            })),
+          );
+        },
+        errorMessage: "ページの取得に失敗しました",
+      });
     },
-    [listChildrenPages, setTree, tree],
+    [listChildrenPages, optimistic, setTree],
   );
 
   const onClickAddRoot: SortableTreeProps["onClickAddRoot"] =
@@ -102,16 +122,18 @@ export const PageList = memo(() => {
         result.data?.addPage.__typename === "Page",
         "TODO: error handling",
       );
-      const newTree: Tree<Data> = tree.concat({
-        id: result.data.addPage.id,
-        children: [],
-        collapsed: true,
-        data: {
-          title: "",
-        },
-      });
-      setTree(newTree);
-    }, [addPage, setTree, tree]);
+      const newNode = result.data.addPage;
+      setTree((prev) =>
+        prev.concat({
+          id: newNode.id,
+          children: [],
+          collapsed: true,
+          data: {
+            title: "",
+          },
+        }),
+      );
+    }, [addPage, setTree]);
 
   const onClickAddChild: SortableTreeProps["onClickAddChild"] = useCallback(
     async (id) => {
@@ -123,47 +145,76 @@ export const PageList = memo(() => {
         "TODO: error handling",
       );
       const newNode = result.data.addPage;
-      const newTree = updateNode(tree, id, (node) => ({
-        ...node,
-        children: node.children.concat({
-          id: newNode.id,
-          children: [],
-          collapsed: true,
-          data: {
-            title: "",
-          },
-        }),
-        collapsed: false,
-      }));
-      setTree(newTree);
+      setTree((prev) =>
+        updateNode(prev, id, (node) => ({
+          ...node,
+          children: node.children.concat({
+            id: newNode.id,
+            children: [],
+            collapsed: true,
+            data: {
+              title: "",
+            },
+          }),
+          collapsed: false,
+        })),
+      );
     },
-    [addPage, setTree, tree],
+    [addPage, setTree],
   );
 
   const onClickRename: SortableTreeProps["onClickRename"] = useCallback(
     async (item) => {
       const value = window.prompt("", item.data.title) ?? "";
-      await updatePage({
-        variables: { id: item.id as PageId, updatePage: { title: value } },
-      });
-      const newTree = updateNode(tree, item.id, (node) => ({
-        ...node,
-        data: {
-          title: value,
+
+      await optimistic({
+        apply: (prev) =>
+          updateNode(prev, item.id, (node) => ({
+            ...node,
+            data: {
+              title: value,
+            },
+          })),
+        commit: async () => {
+          const result = await updatePage({
+            variables: { id: item.id as PageId, updatePage: { title: value } },
+          });
+          invariant(
+            result.data?.updatePage.__typename === "Page",
+            "TODO: error handling",
+          );
         },
-      }));
-      setTree(newTree);
+        errorMessage: "ページ名の変更に失敗しました",
+      });
     },
-    [setTree, tree, updatePage],
+    [optimistic, updatePage],
   );
 
   const onClickDelete: SortableTreeProps["onClickDelete"] = useCallback(
     async (id) => {
-      await removePage({ variables: { id: id as PageId } });
-      const [newTree] = removeNode(tree, id);
-      setTree(newTree);
+      let removedTree: PageTree = [];
+
+      await optimistic({
+        apply: (prev) => {
+          const [newTree] = removeNode(prev, id);
+          removedTree = newTree;
+
+          return newTree;
+        },
+        commit: async () => {
+          const result = await removePage({ variables: { id: id as PageId } });
+          invariant(
+            result.data?.removePage.__typename === "RemovePage",
+            "TODO: error handling",
+          );
+
+          // 削除できたことを確かめてから補充する
+          await ensurePageExists(removedTree);
+        },
+        errorMessage: "ページの削除に失敗しました",
+      });
     },
-    [removePage, setTree, tree],
+    [ensurePageExists, optimistic, removePage],
   );
 
   const onMove: SortableTreeProps["onMove"] = useCallback(
@@ -184,13 +235,22 @@ export const PageList = memo(() => {
             };
         }
       })();
-      await movePage({
-        variables: { id: fromItem.id as PageId, target: moveTarget },
+
+      await optimistic({
+        apply: (prev) => moveNode(prev, fromItem.id, target),
+        commit: async () => {
+          const result = await movePage({
+            variables: { id: fromItem.id as PageId, target: moveTarget },
+          });
+          invariant(
+            result.data?.movePage.__typename === "MovePage",
+            "TODO: error handling",
+          );
+        },
+        errorMessage: "ページの移動に失敗しました",
       });
-      const newTree = moveNode(tree, fromItem.id, target);
-      setTree(newTree);
     },
-    [movePage, setTree, tree],
+    [movePage, optimistic],
   );
 
   return (
