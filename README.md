@@ -25,6 +25,15 @@ makers init
 makers dev
 ```
 
+The server listens on port 8080. To check that it is running, send the `healthCheck` GraphQL query:
+
+```sh
+curl -X POST http://localhost:8080/graphql \
+  -H 'Content-Type: application/json' \
+  -d '{"query":"{ healthCheck }"}'
+# => {"data":{"healthCheck":"OK"}}
+```
+
 ### frontend
 
 Requires Node 20.x and pnpm 3+. To run frontend server locally, and run
