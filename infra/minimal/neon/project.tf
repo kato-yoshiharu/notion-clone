@@ -1,12 +1,8 @@
 resource "neon_project" "main" {
-  name   = var.project_name
-  org_id = var.org_id
-
-  # Neonのドキュメントの推奨に従い、既定値に頼らず重要な値は明示する。
-  # 既定のままだとPostgres 13が選択されてしまう。
-  pg_version = var.pg_version
-  region_id  = var.region_id
-
+  name                      = var.project_name
+  org_id                    = var.org_id
+  region_id                 = var.region_id
+  pg_version                = var.pg_version
   history_retention_seconds = var.history_retention_seconds
 
   branch {
