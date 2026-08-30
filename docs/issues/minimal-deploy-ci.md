@@ -103,10 +103,10 @@ Neon の state を AWS に置くことになるが、認証情報は state に�
 一方 `neon.connection_uri` と `aws.origin_shared_secret` は state に平文で入るので、
 バケットは非公開・暗号化必須・バージョニング有効とする。
 
-- [ ] state 用 S3 バケットと GitHub OIDC 用 IAM ロールを作る（`infra/minimal/bootstrap`、手動 apply）
-- [ ] `neon` / `aws` / `cloudflare` の backend を S3 に変更し、`terraform init -migrate-state` でローカル state を移行する
-- [ ] `aws/neon.tf` の `terraform_remote_state` を S3 backend 参照へ書き換える
-- [ ] `infra/.gitignore` と README の state に関する記述を更新する
+- [x] state 用 S3 バケットと GitHub OIDC 用 IAM ロールを作る（`infra/minimal/bootstrap`、手動 apply）
+- [x] `neon` / `aws` / `cloudflare` の backend を S3 に変更する（`terraform init -migrate-state` の実行は手元で行う）
+- [x] `aws/neon.tf` の `terraform_remote_state` を S3 backend 参照へ書き換える
+- [x] `infra/.gitignore` と README の state に関する記述を更新する
 
 ### 2. 変数の受け渡し
 

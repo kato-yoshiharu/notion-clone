@@ -35,16 +35,49 @@ Workerを挟むことでAPIが同一オリジンになり、CORSも不要にな�
   - NeonのServerless DriverはJS/TS専用でRust/wasm実装がない
   - 生ソケット + `tokio-postgres`で繋ぐ道はあるが、Workersの`connect()`APIをtokioのAsyncストリームへ橋渡しする自作実装が必要で、かつ`sqlx`のコンパイル時クエリ検証も失う実験的経路のため見送り
 
+## Terraform state
+
+`neon` / `aws` / `cloudflare` の3つのstateは、
+S3 backend（バケット `kato-yoshiharu-notion-clone-tfstate`、キーは `<ディレクトリ名>/terraform.tfstate`）に置く。
+ロックはS3のネイティブロック（`use_lockfile = true`）で行うため、DynamoDBのテーブルは使わない。
+
+`neon.connection_uri` と `aws.origin_shared_secret` はstateに平文で入るため、
+バケットは非公開・暗号化必須・バージョニング有効とし、非TLSのアクセスはバケットポリシーで拒否している。
+
+そのバケットとGitHub Actions用のIAMロール自体は、stateを置く先が無い状態で作る必要がある。
+この鶏卵問題を避けるため `infra/minimal/bootstrap` に切り出し、**ここだけはローカルstateの手動applyのまま**とする。
+
+```sh
+cd infra/minimal/bootstrap
+AWS_PROFILE=notion-clone terraform init
+AWS_PROFILE=notion-clone terraform apply
+terraform output github_actions_role_arn  # GitHub Secretsに登録する
+```
+
+以降の `neon` / `aws` / `cloudflare` をローカルから実行するときは、
+backendの認証にプロファイルを使うため `AWS_PROFILE=notion-clone` を付ける。
+
+```sh
+AWS_PROFILE=notion-clone terraform init
+```
+
+ローカルstateからS3へ移行済みの環境で、手元に古い `terraform.tfstate` が残っている場合は次のように移す。
+
+```sh
+AWS_PROFILE=notion-clone terraform init -migrate-state
+```
+
 ## デプロイ手順
 
 Neon → AWS → Cloudflare の順に依存している。初回は上から順に実行する。
+いずれも先に `bootstrap` のapplyが済んでいる前提。
 
 ### 1. Neon
 
 ```sh
 cd infra/minimal/neon
 cp terraform.tfvars.example terraform.tfvars  # org_id を埋める
-terraform init
+AWS_PROFILE=notion-clone terraform init  # stateはS3 backend
 terraform apply
 ```
 
@@ -89,7 +122,7 @@ openssl rand -hex 32
 ```sh
 cd infra/minimal/aws
 cp terraform.tfvars.example terraform.tfvars  # origin_shared_secret を埋める
-terraform init
+AWS_PROFILE=notion-clone terraform init  # stateはS3 backend
 terraform apply
 terraform output function_url
 ```

@@ -1,9 +1,12 @@
 # stateを分けているのは、applyの範囲をこちらに限定してDBの再作成事故を避けるため。
+# 参照先はneon側のbackendと同じバケット・キーを指す。
 data "terraform_remote_state" "neon" {
-  backend = "local"
+  backend = "s3"
 
   config = {
-    path = "${path.module}/../neon/terraform.tfstate"
+    bucket = "kato-yoshiharu-notion-clone-tfstate"
+    key    = "neon/terraform.tfstate"
+    region = "ap-northeast-1"
   }
 }
 
