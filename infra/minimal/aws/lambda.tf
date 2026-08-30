@@ -72,8 +72,7 @@ resource "aws_lambda_function" "backend" {
 }
 
 # API Gatewayは従量課金のため、無料のFunction URLをオリジンにする。
-# AWS_IAM認証はCloudflare側でSigV4署名が必要になり現実的でないので、
-# NONEとしてORIGIN_SHARED_SECRETをアプリ側で検証する。
+# AWS_IAM認証はCloudflare側でSigV4署名が必要になり現実的でないので、NONEとしてORIGIN_SHARED_SECRETをアプリ側で検証する。
 resource "aws_lambda_function_url" "backend" {
   function_name      = aws_lambda_function.backend.function_name
   authorization_type = "NONE"
