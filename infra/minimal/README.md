@@ -76,7 +76,6 @@ Neon → AWS → Cloudflare の順に依存している。初回は上から順�
 
 ```sh
 cd infra/minimal/neon
-cp terraform.tfvars.example terraform.tfvars  # org_id を埋める
 AWS_PROFILE=notion-clone terraform init  # stateはS3 backend
 terraform apply
 ```
@@ -114,6 +113,7 @@ file target/lambda/backend/bootstrap
 ```
 
 共有シークレットを生成し、`terraform.tfvars` に書く。同じ値をあとでWorkerにも設定する。
+CIから実行する場合は、GitHub Secretsの `ORIGIN_SHARED_SECRET` を `TF_VAR_origin_shared_secret` として渡す。
 
 ```sh
 openssl rand -hex 32
@@ -160,12 +160,12 @@ npx wrangler secret put ORIGIN_SHARED_SECRET  # 手順2と同じ値
 
 いずれもリポジトリには置かず、パスワードマネージャに保管する。
 
-| 資格情報                           | 取得元                                   | ローテーション                                           |
-| ---------------------------------- | ---------------------------------------- | -------------------------------------------------------- |
-| Cloudflareブートストラップトークン | ダッシュボードで手動作成                 | ダッシュボードで再作成                                   |
-| `notion-clone-ci`トークン          | `terraform output -raw main_token_value` | `terraform apply -replace=cloudflare_account_token.main` |
-| Neon APIキー                       | Neonのダッシュボード                     | ダッシュボードで再作成。stateには入らない                |
-| `origin_shared_secret`             | `infra/minimal/aws/terraform.tfvars`     | 値を変えてapplyし、`wrangler secret put`も更新する       |
+| 資格情報                           | 取得元                                         | ローテーション                                           |
+| ---------------------------------- | ---------------------------------------------- | -------------------------------------------------------- |
+| Cloudflareブートストラップトークン | ダッシュボードで手動作成                       | ダッシュボードで再作成                                   |
+| `notion-clone-ci`トークン          | `terraform output -raw main_token_value`       | `terraform apply -replace=cloudflare_account_token.main` |
+| Neon APIキー                       | Neonのダッシュボード                           | ダッシュボードで再作成。stateには入らない                |
+| `origin_shared_secret`             | GitHub Secrets / ローカルの `terraform.tfvars` | 値を変えてapplyし、`wrangler secret put`も更新する       |
 
 `origin_shared_secret`はLambdaとWorkerの両方に同じ値が必要なため、片方だけ更新すると全リクエストが403になる。
 

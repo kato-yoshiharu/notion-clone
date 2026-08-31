@@ -113,9 +113,9 @@ Neon の state を AWS に置くことになるが、認証情報は state に�
 シークレットは `origin_shared_secret` のみ。
 これだけを GitHub Secrets から渡し、残りの ID 類はコードに持たせる。
 
-- [ ] `neon.org_id` / `cloudflare.account_id` を `variables.tf` の `default` へ移す
-- [ ] `origin_shared_secret` を `TF_VAR_origin_shared_secret` として GitHub Secrets から渡す
-- [ ] `terraform.tfvars.example` を、ローカル専用である旨がわかる記述に更新する
+- [x] `neon.org_id` / `cloudflare.account_id` を `variables.tf` の `default` へ移す
+- [x] `origin_shared_secret` を `TF_VAR_origin_shared_secret` として GitHub Secrets から渡す
+- [x] `terraform.tfvars.example` を、ローカル専用である旨がわかる記述に更新する
 
 ### 3. AWS 認証の CI 対応
 

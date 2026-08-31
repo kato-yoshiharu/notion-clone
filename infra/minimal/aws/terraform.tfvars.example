@@ -1,4 +1,5 @@
-# terraform.tfvars にコピーして値を埋める。terraform.tfvars はgitignore対象。
+# ローカルからapplyするとき専用。terraform.tfvars にコピーして値を埋める（gitignore対象）。
+# CIでは TF_VAR_origin_shared_secret をGitHub Secretsから渡すため、このファイルは使わない。
 # DATABASE_URL は infra/minimal/neon のstateから自動で読むため、ここには書かない。
 
 # Cloudflare経由であることを示す共有シークレット。`openssl rand -hex 32` などで生成する。

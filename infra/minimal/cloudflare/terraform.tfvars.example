@@ -1,2 +1,0 @@
-# terraform.tfvars にコピーして値を埋める。terraform.tfvars はgitignore対象。
-account_id = "your-cloudflare-account-id"

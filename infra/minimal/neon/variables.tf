@@ -1,6 +1,7 @@
 variable "org_id" {
   description = "Neon organization ID."
   type        = string
+  default     = "org-damp-breeze-05412453"
 }
 
 variable "project_name" {
