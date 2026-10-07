@@ -4,12 +4,6 @@
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
   "scss.validate": false,
-  "terminal.integrated.profiles.osx": {
-    "dev": {
-      // "path": "${workspaceFolder}/dev.sh"
-    }
-  },
-  "terminal.integrated.defaultProfile.osx": "dev",
   "typescript.tsdk": "./node_modules/typescript/lib",
   "[markdown]": {
     "editor.codeActionsOnSave": {
@@ -49,5 +43,9 @@
   "[sql]": {
     "editor.defaultFormatter": "adpyke.vscode-sql-formatter"
   },
-  "eslint.workingDirectories": [{ "mode": "auto" }]
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ]
 }

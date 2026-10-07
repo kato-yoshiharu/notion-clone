@@ -12,7 +12,7 @@
     "tsc": "tsc --noEmit && tsc -p worker --noEmit",
     "lint:es": "eslint '**/*.{js,jsx,ts,tsx}'",
     "lint:style": "stylelint '**/*.{css,scss,ts,tsx}'",
-    "lint": "pnpm lint:es; pnpm lint:style",
+    "lint": "pnpm lint:es && pnpm lint:style",
     "format": "prettier --write --log-level=warn '**/*.{js,jsx,ts,tsx,html,gql,graphql,json}'",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -42,10 +42,13 @@
     "@suimenkathemove/frontend-tsconfig": "^0.1.7",
     "@suimenkathemove/prettier-config": "^0.1.4",
     "@suimenkathemove/stylelint-config": "^0.1.4",
+    "@types/eslint": "^9.6.1",
     "@types/node": "20.9.4",
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.0",
     "@types/styled-components": "^5.1.32",
+    "eslint": "^8.57.1",
+    "prettier": "^3.9.6",
     "storybook": "^7.6.7",
     "stylelint": "^16.1.0",
     "typescript": "5.2.2",
@@ -55,13 +58,7 @@
     "wrangler": "4.86.0"
   },
   "engines": {
-    "node": "20.x",
-    "pnpm": ">=3"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "workerd"
-    ]
+    "node": "24.x",
+    "pnpm": "11.x"
   }
 }

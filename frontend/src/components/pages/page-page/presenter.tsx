@@ -5,13 +5,10 @@ import {
   PageContent,
   PageContentProps,
 } from "@/components/domains/page-content";
-import { Sidebar, SidebarProps } from "@/components/domains/sidebar";
+import { Sidebar } from "@/components/domains/sidebar";
 import { Layout } from "@/components/layout";
 
 export type PagePagePresenterProps = {
-  pageListResult: SidebarProps["pageListResult"];
-  onClickAddPage: SidebarProps["onClickAddPage"];
-  onClickRemovePageButton: SidebarProps["onClickRemovePageButton"];
   ancestors: HeaderProps["ancestors"];
   title: PageContentProps["title"];
   onChangeTitle: PageContentProps["onChangeTitle"];
@@ -22,13 +19,7 @@ export type PagePagePresenterProps = {
 export const PagePagePresenter = memo((props: PagePagePresenterProps) => {
   return (
     <Layout
-      sidebar={
-        <Sidebar
-          pageListResult={props.pageListResult}
-          onClickAddPage={props.onClickAddPage}
-          onClickRemovePageButton={props.onClickRemovePageButton}
-        />
-      }
+      sidebar={<Sidebar />}
       header={<Header ancestors={props.ancestors} />}
       main={
         <PageContent

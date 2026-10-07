@@ -4,8 +4,7 @@ import { useMemo } from "react";
 type Query<T extends string> = Record<T, string>;
 
 type UseRouterQueryResult<T extends string> =
-  | { isReady: false; query: null }
-  | { isReady: true; query: Query<T> };
+  { isReady: false; query: null } | { isReady: true; query: Query<T> };
 
 export const useRouterQuery = <T extends string>(
   keys: T[],

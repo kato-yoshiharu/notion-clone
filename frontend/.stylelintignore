@@ -1,0 +1,4 @@
+out/
+.next/
+storybook-static/
+coverage/

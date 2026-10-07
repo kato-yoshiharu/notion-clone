@@ -1,11 +1,17 @@
-import { createContext, useContext, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useContext,
+  useState,
+} from "react";
 import { Tree } from "react-notion-sortable-tree";
 
 export type PageTree = Tree<{ title: string }>;
 
 interface PageTreeContextValue {
   pageTree: PageTree;
-  setPageTree: (pageTree: PageTree) => void;
+  setPageTree: Dispatch<SetStateAction<PageTree>>;
 }
 
 const PageTreeContext = createContext<PageTreeContextValue>({
