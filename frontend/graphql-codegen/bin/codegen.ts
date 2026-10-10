@@ -5,9 +5,9 @@ import { configScalars, defineScalarType } from "../lib/scalar";
 const config: CodegenConfig = {
   overwrite: true,
   schema: "http://localhost:8080",
-  documents: "../frontend/src/**/*.graphql.ts",
+  documents: "src/**/*.graphql.ts",
   generates: {
-    "../frontend/src/graphql/generated/index.ts": {
+    "src/graphql/generated/index.ts": {
       plugins: [
         "typescript",
         "typescript-operations",

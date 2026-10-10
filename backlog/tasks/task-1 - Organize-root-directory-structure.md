@@ -4,7 +4,7 @@ title: ルート直下のディレクトリ構成を整理する
 status: In Progress
 assignee: []
 created_date: '2026-10-07 22:30'
-updated_date: '2026-10-10 14:59'
+updated_date: '2026-10-10 15:20'
 labels:
   - chore
 dependencies: []
@@ -121,6 +121,24 @@ ordinal: 1000
 - 後始末
   - 不要になったルートの target/ を削除した（git 管理外のビルド成果物）
   - volume を作り直すため docker compose down を実行した。DB のデータ volume は残っている
+
+手順4: graphql-codegen の移動（完了）
+
+- 移動
+  - graphql-codegen/ を frontend/graphql-codegen/ に移した（bin/codegen.ts と lib/scalar.ts だけを残した）
+- 自前の設定を frontend に統合
+  - 削除したもの: package.json、pnpm-lock.yaml、tsconfig.json、.eslintrc.js、.prettierrc.js、.gitignore、README.md（空）
+  - frontend/package.json の devDependencies に次のパッケージを追加した
+    - @graphql-codegen/cli（5.0.0 固定）、typescript、typescript-operations、typescript-react-apollo（いずれも ^4 系）
+    - @graphql-codegen/add（^5）。元は client-preset の推移的依存として入っていたもので、ないと add プラグインが見つからず失敗する
+    - client-preset と ts-node は、使われていないので入れていない
+  - frontend/package.json の scripts に codegen スクリプトを追加した（graphql-codegen --config graphql-codegen/bin/codegen.ts）
+  - frontend/tsconfig.json の include に graphql-codegen/**/*.ts を追加し、frontend の lint 対象にした
+  - bin/codegen.ts のパスは、frontend 直下を基準にした（src/**/*.graphql.ts、src/graphql/generated/index.ts）
+- 確認
+  - pnpm tsc / pnpm lint / pnpm build が通った
+  - backend を cargo make dev で起動して pnpm codegen を実行し、成功した
+  - 生成物（src/graphql/generated/index.ts）は git 管理下で、再生成しても差分は出なかった
 <!-- SECTION:NOTES:END -->
 
 ## AC
