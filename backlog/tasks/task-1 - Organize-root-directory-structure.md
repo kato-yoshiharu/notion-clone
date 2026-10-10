@@ -4,7 +4,7 @@ title: ルート直下のディレクトリ構成を整理する
 status: In Progress
 assignee: []
 created_date: '2026-10-07 22:30'
-updated_date: '2026-10-10 14:23'
+updated_date: '2026-10-10 14:37'
 labels:
   - chore
 dependencies: []
@@ -83,6 +83,27 @@ ordinal: 1000
   - pnpm tsc と pnpm lint が通った
 - 持ち越し
   - Cargo.lock の wasm エントリは手順3で再生成する
+
+手順2: models を backend に取り込む（完了）
+
+- 移動
+  - models/src/* を backend/src/models/ に移した（lib.rs は mod.rs に改名）
+  - models/Cargo.toml を削除した
+  - backend/src/models/page.rs の use crate::common を use super::common に直した
+- 参照の書き換え
+  - backend 内の models:: を crate::models:: に書き換えた
+  - backend/Cargo.toml から models の path 依存を消した
+  - lib.rs と main.rs の両方に mod models を追加した。main.rs と lib.rs が別クレートとして repositories を持つため
+  - macro_use の define_id が他モジュールへ漏れないよう、mod models は各ファイルの末尾に置いた
+- 計画外の変更
+  - ルート Cargo.toml の workspace members から models を外した（手順3で workspace ごと解消する）
+  - Cargo.lock から models と wasm のエントリを消した。ホストの cargo 1.98 が lock を version 4 に書き換えて Docker 内の cargo 1.75 が読めなくなるため、version = 3 に戻した
+  - models 側の lint が backend の clippy 対象になり、2件が出たので直した
+    - define_id と DateTimeUtc の cfg(test) な new() に allow(clippy::new_without_default) を付けた
+    - page.rs の MoveTarget をテストモジュールより前に移した
+- 確認
+  - cargo make check / lint / format / test がすべて通った（test は 17 件成功）
+  - test は test プロファイルの DB が未作成だったため、cargo make -p test init を先に実行した
 <!-- SECTION:NOTES:END -->
 
 ## AC

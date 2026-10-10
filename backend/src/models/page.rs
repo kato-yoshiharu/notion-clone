@@ -1,4 +1,4 @@
-use crate::common::DateTimeUtc;
+use super::common::DateTimeUtc;
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
 define_id!(PageId);
@@ -113,6 +113,13 @@ impl From<Rc<RefCell<MutablePageTree>>> for PageTree {
                 .collect(),
         }
     }
+}
+
+pub enum MoveTarget {
+    Root,
+    Parent(PageId),
+    SiblingParent(PageId),
+    SiblingChild(PageId),
 }
 
 #[cfg(test)]
@@ -230,11 +237,4 @@ mod tests {
         let actual = PageTree::build(pages, &parent_child_relationships, &page_1_id);
         assert_eq!(expected, actual);
     }
-}
-
-pub enum MoveTarget {
-    Root,
-    Parent(PageId),
-    SiblingParent(PageId),
-    SiblingChild(PageId),
 }

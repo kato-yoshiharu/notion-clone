@@ -1,4 +1,5 @@
 mod apis;
+mod models;
 mod repositories;
 mod use_cases;
 

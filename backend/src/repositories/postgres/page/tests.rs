@@ -4,7 +4,7 @@ use super::{
     mock::{insert_mock, InsertMockResponse},
     *,
 };
-use models::page::SimplePageRelationship;
+use crate::models::page::SimplePageRelationship;
 use sqlx::{Executor, Postgres, Transaction};
 use std::collections::HashSet;
 
@@ -32,7 +32,7 @@ where
             .await?
             .into_iter()
             .map(Into::into)
-            .collect::<HashSet<models::page::PageRelationship>>()
+            .collect::<HashSet<crate::models::page::PageRelationship>>()
             .into_iter()
             .map(Into::into)
             .collect::<_>();
@@ -52,7 +52,7 @@ where
             .await?
             .into_iter()
             .map(Into::into)
-            .collect::<HashSet<models::page::PageRelationship>>()
+            .collect::<HashSet<crate::models::page::PageRelationship>>()
             .into_iter()
             .map(Into::into)
             .collect::<_>();
@@ -168,22 +168,22 @@ async fn find_descendants_should_succeed() -> anyhow::Result<()> {
     assert_eq!(
         page_relationships.into_iter().collect::<Vec<_>>(),
         vec![
-            models::page::PageRelationship {
+            crate::models::page::PageRelationship {
                 ancestor: page_1.id,
                 descendant: page_1_1.id,
                 weight: 1
             },
-            models::page::PageRelationship {
+            crate::models::page::PageRelationship {
                 ancestor: page_1.id,
                 descendant: page_1_2.id,
                 weight: 1
             },
-            models::page::PageRelationship {
+            crate::models::page::PageRelationship {
                 ancestor: page_1.id,
                 descendant: page_1_3.id,
                 weight: 1
             },
-            models::page::PageRelationship {
+            crate::models::page::PageRelationship {
                 ancestor: page_1_1.id,
                 descendant: page_1_1_1.id,
                 weight: 1
@@ -298,7 +298,7 @@ mod update_tests {
 
         let page = InternalPageRepository::update(
             &page_1.id,
-            models::page::UpdatePage {
+            crate::models::page::UpdatePage {
                 title: Some("new title".to_string()),
                 text: Some("new text".to_string()),
             },
@@ -330,7 +330,7 @@ mod update_tests {
 
         let page = InternalPageRepository::update(
             &page_1.id,
-            models::page::UpdatePage {
+            crate::models::page::UpdatePage {
                 title: None,
                 text: None,
             },
@@ -471,8 +471,12 @@ mod move_tests {
             mut tx,
         ) = setup().await?;
 
-        InternalPageRepository::move_(&page_1_1.id, &models::page::MoveTarget::Root, &mut tx)
-            .await?;
+        InternalPageRepository::move_(
+            &page_1_1.id,
+            &crate::models::page::MoveTarget::Root,
+            &mut tx,
+        )
+        .await?;
 
         let page_relationships = get_page_relationships(&mut tx).await?;
         assert_eq!(
@@ -533,7 +537,7 @@ mod move_tests {
 
         InternalPageRepository::move_(
             &page_1_1.id,
-            &models::page::MoveTarget::Parent(page_1.id),
+            &crate::models::page::MoveTarget::Parent(page_1.id),
             &mut tx,
         )
         .await?;
@@ -598,7 +602,7 @@ mod move_tests {
 
         InternalPageRepository::move_(
             &page_1_1.id,
-            &models::page::MoveTarget::SiblingParent(page_2.id),
+            &crate::models::page::MoveTarget::SiblingParent(page_2.id),
             &mut tx,
         )
         .await?;
@@ -662,7 +666,7 @@ mod move_tests {
 
         InternalPageRepository::move_(
             &page_1_1.id,
-            &models::page::MoveTarget::SiblingChild(page_2.id),
+            &crate::models::page::MoveTarget::SiblingChild(page_2.id),
             &mut tx,
         )
         .await?;
@@ -726,7 +730,7 @@ mod move_tests {
 
         InternalPageRepository::move_(
             &page_1_2.id,
-            &models::page::MoveTarget::SiblingParent(page_1_3.id),
+            &crate::models::page::MoveTarget::SiblingParent(page_1_3.id),
             &mut tx,
         )
         .await?;
@@ -791,7 +795,7 @@ mod move_tests {
 
         InternalPageRepository::move_(
             &page_1_2.id,
-            &models::page::MoveTarget::SiblingChild(page_1_1.id),
+            &crate::models::page::MoveTarget::SiblingChild(page_1_1.id),
             &mut tx,
         )
         .await?;
