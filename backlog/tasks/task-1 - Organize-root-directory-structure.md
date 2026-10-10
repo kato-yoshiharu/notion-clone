@@ -4,7 +4,7 @@ title: ルート直下のディレクトリ構成を整理する
 status: In Progress
 assignee: []
 created_date: '2026-10-07 22:30'
-updated_date: '2026-10-10 15:20'
+updated_date: '2026-10-10 15:33'
 labels:
   - chore
 dependencies: []
@@ -139,6 +139,16 @@ ordinal: 1000
   - pnpm tsc / pnpm lint / pnpm build が通った
   - backend を cargo make dev で起動して pnpm codegen を実行し、成功した
   - 生成物（src/graphql/generated/index.ts）は git 管理下で、再生成しても差分は出なかった
+
+手順5: docs/issues/ の移動（完了）
+
+- 移動
+  - docs/issues/api-state-update.md と fix-dev-env.md を backlog/tasks/ に git mv した。ファイル名と中身は変えていない
+  - 空になった docs/issues/ を削除した
+- 確認
+  - backlog task list は TASK-1 だけを表示する。移した2ファイルはタスクとして認識されない（想定どおり）
+  - backlog doctor に問題はなかった
+  - 旧パス docs/issues への参照は、他のファイルになかった
 <!-- SECTION:NOTES:END -->
 
 ## AC
