@@ -1,10 +1,10 @@
 ---
 id: TASK-1
 title: ルート直下のディレクトリ構成を整理する
-status: In Progress
+status: Done
 assignee: []
 created_date: '2026-10-07 22:30'
-updated_date: '2026-10-10 15:33'
+updated_date: '2026-10-10 15:43'
 labels:
   - chore
 dependencies: []
@@ -149,7 +149,55 @@ ordinal: 1000
   - backlog task list は TASK-1 だけを表示する。移した2ファイルはタスクとして認識されない（想定どおり）
   - backlog doctor に問題はなかった
   - 旧パス docs/issues への参照は、他のファイルになかった
+
+手順6: 参照パスの更新（完了）
+
+- .github/workflows/backend.yml の paths（push と pull_request の2か所）から models/** を消した
+- infra/minimal/aws/lambda.tf の bootstrap_path を、ルートの target から backend/target に変えた
+  - 計画外。target が backend/ に移ったため、terraform が Lambda のバイナリを見つけられなくなる
+  - infra/minimal/README.md の file target/lambda/backend/bootstrap は、cd backend の後に実行する前提なので変更不要
+- /app/target の置き換えは、手順3で実施済み
+- 旧パス（models/、wasm、graphql-codegen、/app/target、docs/issues）を grep し、取りこぼしがないことを確認した
+- 最終確認
+  - backend: cargo make check / lint / format / test がすべて通った（test は 17 件成功）
+  - frontend: pnpm tsc / lint / build が通った
+
+手順7: AC への反映（完了）
+
+- 未チェックだった4項目（docs、graphql-codegen、models、wasm）を [x] にした。12項目すべてがチェック済み
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+ルート直下の構成を整理し、移動・改名で壊れる参照を直した。
+
+変更内容:
+
+- wasm/ とフロントエンドの wasm 関連ファイルを削除した
+- models クレートを backend/src/models/ に取り込み、Cargo workspace を解消した
+  - Cargo.lock と rust-toolchain は backend/ に移し、ルートの Cargo.toml と .gitignore は削除した
+- graphql-codegen を frontend/graphql-codegen/ に移し、自前の設定ファイルを frontend の設定に統合した
+  - codegen の依存を frontend/package.json に追加し、codegen スクリプトを足した
+- docs/issues/ の2ファイルを backlog/tasks/ に移した
+- 参照パスを更新した
+  - /app/target を /app/backend/target に変えた（docker-compose.yml、.vscode/launch.json、docs/backend/vscode-debugger.md）
+  - .github/workflows/backend.yml の paths から models/** を消した
+  - infra/minimal/aws/lambda.tf の bootstrap_path を backend/target に変えた
+
+検証結果:
+
+- backend: cargo make check / lint / format / test が通った（test は 17 件成功）
+- frontend: pnpm tsc / lint / build が通った
+- backend を起動して pnpm codegen を実行し、成功した。生成物に差分は出なかった
+- 旧パスを grep し、取りこぼしがないことを確認した
+
+リスクとフォローアップ:
+
+- frontend/pnpm-lock.yaml が約1,950行増えた（codegen の依存を追加したため）
+- Cargo.lock は version 3 のまま。ホストの cargo（1.98）で操作すると version 4 に書き換えられ、Docker 内の cargo（1.75）が読めなくなる
+- infra/ と infrastructure/ の整理は据え置き。別タスクで対応する
+<!-- SECTION:FINAL_SUMMARY:END -->
 
 ## AC
 
@@ -160,10 +208,10 @@ ordinal: 1000
 - [x] .vscode
 - [x] backend
 - [x] backlog
-- [ ] docs
+- [x] docs
 - [x] frontend
-- [ ] graphql-codegen
+- [x] graphql-codegen
 - [x] infra
 - [x] infrastructure
-- [ ] models
-- [ ] wasm
+- [x] models
+- [x] wasm

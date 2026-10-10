@@ -2,7 +2,7 @@ locals {
   function_name = "notion-clone-backend"
 
   # `cargo make lambda-build` の成果物。
-  bootstrap_path = "${path.module}/../../../target/lambda/backend/bootstrap"
+  bootstrap_path = "${path.module}/../../../backend/target/lambda/backend/bootstrap"
 }
 
 # provided.al2023 はzip内の `bootstrap` をエントリポイントとして扱う。

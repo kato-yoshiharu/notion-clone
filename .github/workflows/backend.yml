@@ -5,12 +5,10 @@ on:
     paths:
       - .github/**
       - backend/**
-      - models/**
   pull_request:
     paths:
       - .github/**
       - backend/**
-      - models/**
 
 defaults:
   run:
