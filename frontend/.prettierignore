@@ -1,3 +1,2 @@
 src/graphql/generated/
-src/wasm/
 worker/worker-configuration.d.ts

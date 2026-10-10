@@ -1,10 +1,10 @@
 ---
 id: TASK-1
 title: ルート直下のディレクトリ構成を整理する
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2026-10-07 22:30'
-updated_date: '2026-10-08 08:04'
+updated_date: '2026-10-10 14:23'
 labels:
   - chore
 dependencies: []
@@ -66,6 +66,24 @@ ordinal: 1000
 
 - models の macros.rs の macro_export の扱いが変わる可能性がある。cargo check で確かめる
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+手順1: wasm の削除（完了）
+
+- 削除したもの
+  - wasm/
+  - frontend/src/wasm/
+  - frontend/src/pages/wasm.tsx
+- 設定の修正
+  - frontend/.prettierignore と frontend/.eslintrc.js から src/wasm を削除した
+  - ルート Cargo.toml の workspace members から wasm も外した（計画外。wasm/ を消すと cargo が壊れるため）
+- 確認
+  - pnpm tsc と pnpm lint が通った
+- 持ち越し
+  - Cargo.lock の wasm エントリは手順3で再生成する
+<!-- SECTION:NOTES:END -->
 
 ## AC
 
