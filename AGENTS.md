@@ -1,5 +1,8 @@
 # AGENTS.md
 
+## プロジェクトの概要
+
+[Notion](https://www.notion.so/)のクローンアプリです。
 <!-- BACKLOG.MD GUIDELINES START -->
 <!-- backlog.md-instructions-version: 1.53.0 -->
 <CRITICAL_INSTRUCTION>
