@@ -5,6 +5,10 @@
 [Notion](https://www.notion.so/)のクローンアプリです。
 学習用に作成した個人開発のポートフォリオです。
 
+## 構成
+
+<!-- TODO: chore/organize-dirs ブランチで整理中なのでそのあとに書く -->
+
 <!-- BACKLOG.MD GUIDELINES START -->
 <!-- backlog.md-instructions-version: 1.53.0 -->
 <CRITICAL_INSTRUCTION>
