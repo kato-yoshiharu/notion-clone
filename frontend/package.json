@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "preview": "wrangler dev",
+    "codegen": "graphql-codegen --config graphql-codegen/bin/codegen.ts",
     "types": "wrangler types worker/worker-configuration.d.ts",
     "deploy:cf": "wrangler deploy",
     "tsc": "tsc --noEmit && tsc -p worker --noEmit",
@@ -32,6 +33,11 @@
     "styled-components": "^6.1.1"
   },
   "devDependencies": {
+    "@graphql-codegen/add": "^5.0.3",
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/typescript-operations": "^4.6.1",
+    "@graphql-codegen/typescript-react-apollo": "^4.4.2",
     "@storybook/addon-essentials": "^7.6.7",
     "@storybook/addon-interactions": "^7.6.7",
     "@storybook/addon-links": "^7.6.7",

@@ -2,7 +2,7 @@ use super::{common::DateTimeUtc, error::GraphQLError};
 use crate::use_cases::page::PageUseCase;
 use async_graphql::{Context, Enum, InputObject, Object, SimpleObject};
 
-define_id!(PageId, models::page::PageId);
+define_id!(PageId, crate::models::page::PageId);
 
 struct Page {
     id: PageId,
@@ -12,8 +12,8 @@ struct Page {
     updated_at: DateTimeUtc,
 }
 
-impl From<models::page::Page> for Page {
-    fn from(page: models::page::Page) -> Self {
+impl From<crate::models::page::Page> for Page {
+    fn from(page: crate::models::page::Page) -> Self {
         Self {
             id: page.id.into(),
             title: page.title,
@@ -56,8 +56,8 @@ struct PageTree {
     children: Vec<PageTree>,
 }
 
-impl From<models::page::PageTree> for PageTree {
-    fn from(value: models::page::PageTree) -> Self {
+impl From<crate::models::page::PageTree> for PageTree {
+    fn from(value: crate::models::page::PageTree) -> Self {
         Self {
             id: value.id.into(),
             title: value.title,
@@ -118,7 +118,7 @@ struct AddPage {
     text: String,
 }
 
-impl From<AddPage> for models::page::AddPage {
+impl From<AddPage> for crate::models::page::AddPage {
     fn from(value: AddPage) -> Self {
         Self {
             id: value.id.map(Into::into),
@@ -136,7 +136,7 @@ struct UpdatePage {
     text: Option<String>,
 }
 
-impl From<UpdatePage> for models::page::UpdatePage {
+impl From<UpdatePage> for crate::models::page::UpdatePage {
     fn from(value: UpdatePage) -> Self {
         Self {
             title: value.title,
@@ -168,15 +168,17 @@ struct MoveTarget {
     id: PageId,
 }
 
-impl From<MoveTarget> for models::page::MoveTarget {
+impl From<MoveTarget> for crate::models::page::MoveTarget {
     fn from(value: MoveTarget) -> Self {
         match value.type_ {
-            MoveTargetType::Root => models::page::MoveTarget::Root,
-            MoveTargetType::Parent => models::page::MoveTarget::Parent(value.id.into()),
+            MoveTargetType::Root => crate::models::page::MoveTarget::Root,
+            MoveTargetType::Parent => crate::models::page::MoveTarget::Parent(value.id.into()),
             MoveTargetType::SiblingParent => {
-                models::page::MoveTarget::SiblingParent(value.id.into())
+                crate::models::page::MoveTarget::SiblingParent(value.id.into())
             }
-            MoveTargetType::SiblingChild => models::page::MoveTarget::SiblingChild(value.id.into()),
+            MoveTargetType::SiblingChild => {
+                crate::models::page::MoveTarget::SiblingChild(value.id.into())
+            }
         }
     }
 }

@@ -3,13 +3,13 @@ use crate::repositories::postgres::create_pool;
 use sqlx::{Postgres, Transaction};
 
 pub struct InsertMockResponse {
-    pub page_1: models::page::Page,
-    pub page_2: models::page::Page,
-    pub page_3: models::page::Page,
-    pub page_1_1: models::page::Page,
-    pub page_1_2: models::page::Page,
-    pub page_1_3: models::page::Page,
-    pub page_1_1_1: models::page::Page,
+    pub page_1: crate::models::page::Page,
+    pub page_2: crate::models::page::Page,
+    pub page_3: crate::models::page::Page,
+    pub page_1_1: crate::models::page::Page,
+    pub page_1_2: crate::models::page::Page,
+    pub page_1_3: crate::models::page::Page,
+    pub page_1_1_1: crate::models::page::Page,
 }
 
 pub(super) async fn insert_mock<'a>(
@@ -17,8 +17,8 @@ pub(super) async fn insert_mock<'a>(
     let mut tx = create_pool().await.begin().await?;
 
     let page_1 = InternalPageRepository::add(
-        &None::<models::page::PageId>,
-        models::page::AddPage {
+        &None::<crate::models::page::PageId>,
+        crate::models::page::AddPage {
             title: "1".to_string(),
             ..Default::default()
         },
@@ -27,8 +27,8 @@ pub(super) async fn insert_mock<'a>(
     .await?;
 
     let page_2 = InternalPageRepository::add(
-        &None::<models::page::PageId>,
-        models::page::AddPage {
+        &None::<crate::models::page::PageId>,
+        crate::models::page::AddPage {
             title: "2".to_string(),
             ..Default::default()
         },
@@ -37,8 +37,8 @@ pub(super) async fn insert_mock<'a>(
     .await?;
 
     let page_3 = InternalPageRepository::add(
-        &None::<models::page::PageId>,
-        models::page::AddPage {
+        &None::<crate::models::page::PageId>,
+        crate::models::page::AddPage {
             title: "3".to_string(),
             ..Default::default()
         },
@@ -48,7 +48,7 @@ pub(super) async fn insert_mock<'a>(
 
     let page_1_1 = InternalPageRepository::add(
         &Some(page_1.id),
-        models::page::AddPage {
+        crate::models::page::AddPage {
             title: "1-1".to_string(),
             ..Default::default()
         },
@@ -58,7 +58,7 @@ pub(super) async fn insert_mock<'a>(
 
     let page_1_2 = InternalPageRepository::add(
         &Some(page_1.id),
-        models::page::AddPage {
+        crate::models::page::AddPage {
             title: "1-2".to_string(),
             ..Default::default()
         },
@@ -68,7 +68,7 @@ pub(super) async fn insert_mock<'a>(
 
     let page_1_3 = InternalPageRepository::add(
         &Some(page_1.id),
-        models::page::AddPage {
+        crate::models::page::AddPage {
             title: "1-3".to_string(),
             ..Default::default()
         },
@@ -78,7 +78,7 @@ pub(super) async fn insert_mock<'a>(
 
     let page_1_1_1 = InternalPageRepository::add(
         &Some(page_1_1.id),
-        models::page::AddPage {
+        crate::models::page::AddPage {
             title: "1-1-1".to_string(),
             ..Default::default()
         },
