@@ -3,6 +3,8 @@
 ## プロジェクトの概要
 
 [Notion](https://www.notion.so/)のクローンアプリです。
+学習用に作成した個人開発のポートフォリオです。
+
 <!-- BACKLOG.MD GUIDELINES START -->
 <!-- backlog.md-instructions-version: 1.53.0 -->
 <CRITICAL_INSTRUCTION>
