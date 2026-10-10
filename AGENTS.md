@@ -9,6 +9,10 @@
 
 <!-- TODO: chore/organize-dirs ブランチで整理中なのでそのあとに書く -->
 
+## 完了を主張する前の検証
+
+<!-- TODO -->
+
 <!-- BACKLOG.MD GUIDELINES START -->
 <!-- backlog.md-instructions-version: 1.53.0 -->
 <CRITICAL_INSTRUCTION>
