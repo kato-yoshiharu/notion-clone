@@ -4,6 +4,7 @@ macro_rules! define_id {
         pub struct $name(pub uuid::Uuid);
 
         #[cfg(test)]
+        #[allow(clippy::new_without_default)]
         impl $name {
             pub fn new() -> Self {
                 Self(uuid::Uuid::new_v4())

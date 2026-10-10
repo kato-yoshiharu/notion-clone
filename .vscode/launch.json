@@ -20,7 +20,7 @@
       "request": "attach",
       "name": "Attach 'backend'",
       // "pid": "${command:pickProcess}"
-      "program": "/app/target/debug/backend"
+      "program": "/app/backend/target/debug/backend"
     },
     {
       "name": "dev",

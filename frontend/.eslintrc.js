@@ -5,7 +5,6 @@ module.exports = {
   ],
   ignorePatterns: [
     "src/graphql/generated",
-    "src/wasm",
     "worker",
     "out",
     ".next",

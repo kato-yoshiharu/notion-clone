@@ -18,6 +18,11 @@
     },
     "noEmit": true
   },
-  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "graphql-codegen/**/*.ts"
+  ],
   "exclude": ["node_modules"]
 }
