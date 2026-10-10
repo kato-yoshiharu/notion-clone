@@ -12,7 +12,7 @@ services:
     volumes:
       - ../..:/app
       - notion-clone-app-cargo:/usr/local/cargo/registry
-      - notion-clone-app-target:/app/target
+      - notion-clone-app-target:/app/backend/target
     working_dir: /app/backend
     env_file: "${ENV_FILE:-../.env.dev}"
     command: "${COMMAND}"

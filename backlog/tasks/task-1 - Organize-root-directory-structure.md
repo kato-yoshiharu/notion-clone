@@ -4,7 +4,7 @@ title: ルート直下のディレクトリ構成を整理する
 status: In Progress
 assignee: []
 created_date: '2026-10-07 22:30'
-updated_date: '2026-10-10 14:37'
+updated_date: '2026-10-10 14:59'
 labels:
   - chore
 dependencies: []
@@ -104,6 +104,23 @@ ordinal: 1000
 - 確認
   - cargo make check / lint / format / test がすべて通った（test は 17 件成功）
   - test は test プロファイルの DB が未作成だったため、cargo make -p test init を先に実行した
+
+手順3: Cargo workspace の解消（完了）
+
+- 移動と削除
+  - Cargo.lock と rust-toolchain を backend/ に git mv した
+  - ルートの Cargo.toml を削除した。[workspace] だけのファイルで、backend は単独パッケージになるため移す先がない
+  - ルートの .gitignore を削除した。中身は /target だけで、backend/.gitignore に同じ行がある
+- 手順6の一部を先に実施
+  - ルートの target が不要になり、Docker の volume を /app/backend/target に変えないと検証できないため
+  - backend/docker/docker-compose.yml、.vscode/launch.json、docs/backend/vscode-debugger.md の /app/target を /app/backend/target に変えた
+- Cargo.lock
+  - Docker 内の cargo で cargo update --workspace を実行したが、差分は出なかった。手順2で整理済みで、version = 3 のまま
+- 確認
+  - cargo make check / lint / format / test がすべて通った（test は 17 件成功）
+- 後始末
+  - 不要になったルートの target/ を削除した（git 管理外のビルド成果物）
+  - volume を作り直すため docker compose down を実行した。DB のデータ volume は残っている
 <!-- SECTION:NOTES:END -->
 
 ## AC
